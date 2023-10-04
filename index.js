@@ -49,6 +49,7 @@ async function download() {
     );
     await Promise.all(images_array.map((item) => item.download()));
   }
+  bar.stop();
 }
 
 download();
