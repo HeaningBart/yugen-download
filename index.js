@@ -31,7 +31,7 @@ async function download() {
   const json = await get_json_series(slug);
   await fs.mkdir(json.title);
   console.log("Number of chapters to be downloaded: " + json.chapters.length);
-  bar.start(35, 0, {});
+  bar.start(json.chapters.length, 0, {});
   for (let i = 0; i <= json.chapters.length - 1; i++) {
     const chapter = json.chapters[i];
     bar.update(i + 1);
