@@ -44,7 +44,8 @@ async function download() {
             : `https://api.yugenmangas.net/${image}`,
           directory: `./${json.title}/${chapter.chapter_name}`,
           fileName: `${index}.jpg`,
-          timeout: 150000,
+          timeout: 15000,
+          maxAttempts: 5,
         })
     );
     await Promise.all(images_array.map((item) => item.download()));
