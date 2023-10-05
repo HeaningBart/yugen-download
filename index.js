@@ -32,13 +32,12 @@ program
   .description("CLI to download series from yugen")
   .version("1.0.0");
 
-program.argument(
-  "<page>",
-  "page of the query of series to be downloaded (1000 series per page)"
-);
-program.parse();
+program.option("-s, --start <number>").option("-e, --end <number>");
 
-const page = program.args[0];
+program.parse();
+const options = program.opts();
+
+console.log(options);
 
 async function download(slug) {
   const json = await get_json_series(slug);
@@ -67,8 +66,10 @@ async function download(slug) {
 }
 
 async function init() {
-  const json = await get_series_per_page(page);
+  const json = (await get_series_per_page()).slice(options.start - 1);
   console.log("Number of series to be downloaded: " + json.length);
+  const error_file = `error-${Date.now()}.txt`;
+  await fs.writeFile(error_file, "");
   series_bar.start(json.length, 0, {});
   for (let i = 0; i <= json.length - 1; i++) {
     try {
@@ -76,6 +77,10 @@ async function init() {
       await download(json[i]);
     } catch (error) {
       console.log(`Series ${json[i]} wasnt able to be downloaded`);
+      await fs.appendFile(
+        error_file,
+        `Series ${json[i]} wasnt able to be downloaded \n`
+      );
     }
   }
   series_bar.stop();
